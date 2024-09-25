@@ -4,6 +4,8 @@ const classController = require('../controllers/classController');
 const { authenticateToken } = require('../middlewares/auth');
 
 router.post('/create', authenticateToken, classController.createClass);
-// Thêm các route khác cho lớp học ở đây
+router.post('/join', authenticateToken, classController.joinClass);
+router.post('/leave', authenticateToken, classController.leaveClass);
+router.post('/delete', authenticateToken, classController.deleteClass);
 
 module.exports = router;

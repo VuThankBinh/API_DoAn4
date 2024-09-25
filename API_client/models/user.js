@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     tel: { type: String, default: '' },
     joinedClasses: [{ type: String }],
     createdClasses: [{ type: String }],
-    lessonsCompleted: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Lesson' }]
+    lessonsCompleted: [{ type: String }]
 });
 
 module.exports = mongoose.model('User', userSchema);
