@@ -41,11 +41,21 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => { 
     try {
-        const { email, password, isGoogleSignIn } = req.body;
-        const user = await User.findOne({ email });
-        console.log('Attempting login for user:', user);
-
-        if (!user) {
+        const { email, password, isGoogleSignIn,name } = req.body;
+        let user = await User.findOne({ email });
+        // console.log('Attempting login for user:', user);
+        if (!user && isGoogleSignIn) {
+            // Tạo tài khoản mới nếu đăng nhập Google và email chưa tồn tại
+            user = new User({
+                email,
+                isGoogleSignIn: true,
+                accountType: 'google',
+                name: name,
+                // Các trường khác có thể được thêm vào tùy theo yêu cầu của bạn
+            });
+            await user.save();
+            console.log('New Google user created:', user);
+        } else if (!user) {
             return res.status(401).json({ error: 'Email không tồn tại' });
         }
 
@@ -71,7 +81,7 @@ exports.login = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        console.log('Generating token for user:', user);
+        // console.log('Generating token for user:', user);
         res.json({ message: 'Đăng nhập thành công', token, user: { id: user._id, email: user.email, name: user.name } });
     } catch (error) {
         console.error('Lỗi khi đăng nhập:', error);
@@ -81,17 +91,20 @@ exports.login = async (req, res) => {
 
 exports.sendOTP = async (req, res) => {
     try {
-        const { email } = req.body;
+        const { email, isResetPassword } = req.body;
 
         if (!email) {
             return res.status(400).json({ message: 'Email là bắt buộc' });
         }
+        if(isResetPassword){
+            // Kiểm tra xem email có tồn tại trong cơ sở dữ liệu không
+            const existingUser = await User.findOne({ email });
+            if (!existingUser) {
+                return res.status(404).json({ message: 'Email chưa được đăng ký' });
+            }
 
-        // Kiểm tra xem email có tồn tại trong cơ sở dữ liệu không
-        const existingUser = await User.findOne({ email });
-        if (!existingUser) {
-            return res.status(404).json({ message: 'Email chưa được đăng ký' });
         }
+        else{}
 
         const otp = await generateOTP(email);
         
@@ -128,17 +141,17 @@ exports.verifyOTP = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     try {
-        const { email, newPassword, otp } = req.body;
+        const { email, newPassword } = req.body;
 
         if (!email || !newPassword || !otp) {
             return res.status(400).json({ message: 'Email, mật khẩu mới và OTP là bắt buộc' });
         }
 
-        const isValid = await verifyOTP(email, otp);
+        // const isValid = await verifyOTP(email, otp);
 
-        if (!isValid) {
-            return res.status(400).json({ message: 'OTP không hợp lệ hoặc đã hết hạn' });
-        }
+        // if (!isValid) {
+        //     return res.status(400).json({ message: 'OTP không hợp lệ hoặc đã hết hạn' });
+        // }
 
         const user = await User.findOne({ email });
         if (!user) {
@@ -148,7 +161,14 @@ exports.resetPassword = async (req, res) => {
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
 
-        res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });
+        // res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });
+        if(res.status(200)){
+            return res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });
+            console.log("Đặt lại mật khẩu thành công");
+        }
+        else{
+            return res.status(400).json({ message: 'Đặt lại mật khẩu thất bại' });
+        }
     } catch (error) {
         console.error('Lỗi khi đặt lại mật khẩu:', error);
         res.status(500).json({ message: 'Lỗi server' });

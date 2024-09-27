@@ -19,7 +19,7 @@ const emailUtils = {
    */
   sendEmail: async (to, subject, text, html) => {
     const mailOptions = {
-      from: '"AI Go AI Tutor" <aigoaitutor@gmail.com>',
+      from: '"AlgoAI Coach" <aigoaitutor@gmail.com>',
       to,
       subject,
       text,
@@ -50,6 +50,7 @@ const emailUtils = {
       <p>Your OTP for AI Go AI Tutor is:</p>
       <h2 style="color: #4CAF50; font-size: 24px;">${otp}</h2>
       <p>Please use this to complete your verification.</p>
+      <p>OTP will expire in 5 minutes</p>
       <p>If you didn't request this OTP, please ignore this email.</p>
     `;
 

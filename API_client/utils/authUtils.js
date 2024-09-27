@@ -15,8 +15,8 @@ function getTokenFromHeader(req) {
 function authenticateToken(req, res, next) { 
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    console.log('Token received:', token);
-    console.log('JWT_SECRET:', process.env.JWT_SECRET);
+    // console.log('Token received:', token);
+    // console.log('JWT_SECRET:', process.env.JWT_SECRET);
 
     if (token == null) return res.sendStatus(401);
 

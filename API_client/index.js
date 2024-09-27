@@ -1,5 +1,4 @@
 require('dotenv').config();
-console.log('JWT_SECRET from env:', process.env.JWT_SECRET);
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routers/auth');
@@ -7,19 +6,29 @@ const userRoutes = require('./routers/users');
 const classRoutes = require('./routers/classes');
 const lessonRoutes = require('./routers/lessons');
 const jwtSecret = process.env.JWT_SECRET;
+const cors = require('cors');
 const { authenticateToken } = require('./utils/authUtils');
 const app = express();
+app.use(cors());
 
+const hostname = 'demohostvtb.ddns.net';
+// mongoose.connect('mongodb://localhost:27017/database', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true
+// }).then(() => console.log('Kết nối thành công đến MongoDB'))
+// .catch(err => console.error('Lỗi kết nối MongoDB:', err));
 // Kết nối MongoDB
-mongoose.connect('mongodb://localhost:27017/database', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => console.log('Kết nối thành công đến MongoDB'))
+mongoose.connect('mongodb://localhost:27017/database')
+  .then(() => console.log('Kết nối thành công đến MongoDB'))
   .catch(err => console.error('Lỗi kết nối MongoDB:', err));
-
+app.use(cors({
+    origin: '*', // Cho phép tất cả các domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 app.use(express.json());
 
-// Sử dụng routes
+// S dụng routes
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/classes', classRoutes);
@@ -41,4 +50,6 @@ app.get('/protected', authenticateToken, (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running at port ${PORT}`);
+});
