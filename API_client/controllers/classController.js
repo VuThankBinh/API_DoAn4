@@ -62,7 +62,9 @@ exports.joinClass = async (req, res) => {
         if (classToJoin.users.includes(email)) {
             return res.status(400).json({ message: 'Người dùng đã tham gia lớp học này' });
         }
-
+        if (classToJoin.teacher.includes(email)) {
+            return res.status(400).json({ message: 'Giáo viên không thể tham gia lớp học' });
+        }
         classToJoin.users.push(email);
         await classToJoin.save();
 

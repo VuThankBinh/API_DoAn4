@@ -141,9 +141,9 @@ exports.verifyOTP = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
     try {
-        const { email, newPassword } = req.body;
+        const { email, password } = req.body;
 
-        if (!email || !newPassword || !otp) {
+        if (!email || !password) {
             return res.status(400).json({ message: 'Email, mật khẩu mới và OTP là bắt buộc' });
         }
 
@@ -158,7 +158,7 @@ exports.resetPassword = async (req, res) => {
             return res.status(404).json({ message: 'Không tìm thấy người dùng' });
         }
 
-        user.password = await bcrypt.hash(newPassword, 10);
+        user.password = await bcrypt.hash(password, 10);
         await user.save();
 
         // res.status(200).json({ message: 'Đặt lại mật khẩu thành công' });

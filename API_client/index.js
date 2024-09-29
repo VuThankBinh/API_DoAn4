@@ -18,6 +18,9 @@ const hostname = 'demohostvtb.ddns.net';
 // }).then(() => console.log('Kết nối thành công đến MongoDB'))
 // .catch(err => console.error('Lỗi kết nối MongoDB:', err));
 // Kết nối MongoDB
+
+// mongodb://localhost:27017/database
+// mongoose.connect('mongodb+srv://aigoaitutor:Mct7rAlN7KZXlWPG@database1.trcnk.mongodb.net/database')
 mongoose.connect('mongodb://localhost:27017/database')
   .then(() => console.log('Kết nối thành công đến MongoDB'))
   .catch(err => console.error('Lỗi kết nối MongoDB:', err));
@@ -28,7 +31,7 @@ app.use(cors({
   }));
 app.use(express.json());
 
-// S dụng routes
+// S�� dụng routes
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/classes', classRoutes);
