@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const lessonController = require('../controllers/lessonController');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken } = require('../middlewares/gatewayAuth');
 
 router.get('/', authenticateToken, lessonController.getAllLessons);
 router.get('/:id', authenticateToken, lessonController.getLessonById);

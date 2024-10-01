@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const classController = require('../controllers/classController');
-const { authenticateToken } = require('../middlewares/auth');
+const { authenticateToken } = require('../middlewares/gatewayAuth');
 
 router.post('/create', authenticateToken, classController.createClass);
 router.post('/join', authenticateToken, classController.joinClass);
